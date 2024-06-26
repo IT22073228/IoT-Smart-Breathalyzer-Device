@@ -1,0 +1,40 @@
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C address 0x27, 16 column and 2 rows
+const int batteryPin = A2;
+
+void setup() {
+  lcd.init(); // initialize the lcd
+  lcd.backlight();
+  lcd.clear();
+}
+
+void loop() {
+  float variableBattery = readBatteryVoltage(); // Implement your function to read voltage
+
+  int batteryPercentage = calculateBatteryPercentage(variableBattery);
+
+    lcd.print(" Batt=");
+    lcd.print(batteryPercentage);
+    lcd.print("%");
+
+    delay(1000); }
+
+
+float readBatteryVoltage() {
+  int rawValue = analogRead(batteryPin) ;
+  // Convert rawValue to voltage (adjust these values based on your setup)
+  float voltage = rawValue * (4.2/ 1023);
+  return voltage;
+}
+
+int calculateBatteryPercentage(float voltage) {
+  // Determine your battery's voltage range and corresponding capacity
+  float minVoltage = 3.6; // Minimum voltage
+  float maxVoltage = 9.0; // Maximum voltage
+
+  // Calculate battery percentage based on voltage range
+  int batteryPercentage = map(voltage, minVoltage, maxVoltage, 0, 100) ;
+  batteryPercentage = constrain(batteryPercentage, 0, 100); // Limit to 0-100
+
+  return batteryPercentage;
+}
